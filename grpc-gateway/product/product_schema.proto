@@ -1,0 +1,41 @@
+// command to create pb.go file 
+// protoc *.proto --go_out=plugins=grpc:. --go_opt=paths=source_relative
+syntax = "proto3";
+
+package product_grpc;
+
+option go_package = "./";
+service Product {
+    rpc GetProductById (ProductRequest) returns (ProductReply) {}
+    rpc GetProductList (Empty) returns (ProductsReply){}
+    rpc UpdateProduct (UpdateProductRequest) returns (ProductReply) {}
+    rpc CreateProduct (CreateProductRequest) returns (ProductReply) {}
+    rpc DeleteProduct (ProductRequest) returns (ProductReply) {}
+}
+
+message Empty {}
+
+message ProductsReply {
+    repeated ProductReply products = 1;
+}
+
+message ProductReply {
+    int32 id = 1;
+    string name = 2;
+    int32 price = 3;
+}
+
+message ProductRequest {
+    int32 id =1;
+}
+
+message UpdateProductRequest {
+    int32 id = 1;
+    string name = 2;
+    int32 price = 3;
+}
+
+message CreateProductRequest {
+    string name = 1;
+    int32  price = 2;
+}

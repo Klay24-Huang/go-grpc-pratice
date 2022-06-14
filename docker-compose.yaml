@@ -1,0 +1,25 @@
+version: "3.5"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /server
+    volumes:
+      - .:/server
+    ports:
+      - "1231:1231"
+    depends_on:
+      - db
+    entrypoint: go run main.go
+    restart: always
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=mysecretpassword
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: always
