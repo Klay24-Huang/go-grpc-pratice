@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-service
+spec:
+  selector:
+    # 選擇帶有 "server-service" 的 pod
+    app: server-service
+  ports:
+    - protocol: "TCP"
+      port: 1231
+      # 此為 Pod 對外開放的 port number
+      targetPort: 1231
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-service
+spec:
+  selector:
+    matchLabels:
+      app: server-service
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: server-service
+    spec:
+      containers:
+        - name: server-app
+          image: vitohuang852/server-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1231
+# kubectl apply -f server-service.yaml
+# kubectl delete -f server-service.yaml
+# minikube service server-service --url

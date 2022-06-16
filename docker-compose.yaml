@@ -1,25 +1,42 @@
-version: "3.5"
+version: "3.7"
 
 services:
-  server:
+  user-service:
+    container_name: user-service
     build:
       context: .
-      dockerfile: Dockerfile
-    working_dir: /server
-    volumes:
-      - .:/server
+      dockerfile: user.dockerfile
+    ports:
+      - "50052:50052"    
+    restart: always
+  product-service:
+    container_name: product-service
+    build:
+      context: .
+      dockerfile: product.dockerfile
+    ports:
+      - "50053:50053"
+    restart: always
+  order-service:
+    container_name: order-service
+    build:
+      context: .
+      dockerfile: order.dockerfile
+    ports:
+      - "50054:50054"
+    depends_on:
+      - user-service
+      - product-service
+    restart: always
+  server:
+    container_name: server-service
+    build:
+      context: .
+      dockerfile: server.dockerfile
     ports:
       - "1231:1231"
     depends_on:
-      - db
-    entrypoint: go run main.go
+      - order-service
     restart: always
-  db:
-    image: postgres:latest
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=mysecretpassword
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    restart: always
+  
+

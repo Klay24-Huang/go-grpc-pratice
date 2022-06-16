@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    # 選擇帶有 "product-service" 的 pod
+    app: product-service
+  ports:
+    - protocol: "TCP"
+      nodePort: 30053
+      port: 50053
+      targetPort: 50053
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: product-service
+  labels:
+    app: product-service
+spec:
+  containers:
+    - name: product-service-container
+      image: vitohuang852/product-service
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 50053
+# kubectl apply -f product-service.yaml
+# kubectl delete -f product-service.yaml
+# minikube service product-service-service --url

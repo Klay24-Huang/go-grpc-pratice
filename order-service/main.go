@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -11,6 +12,7 @@ import (
 	"grpc-practice/order-service/order"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Server ...
@@ -173,28 +175,46 @@ func (s *Server) DeleteOrder(ctx context.Context, in *pb.OrderRequest) (*pb.Orde
 
 const (
 	port                  = ":50054"
-	userServiceAddress    = "localhost:50052"
-	productServiceAddress = "localhost:50053"
+	userServiceAddress    = "user-service:50052"
+	productServiceAddress = "product-service:50053"
 )
 
 func main() {
+	fmt.Println("run order service....")
 	// Injection
-	userServiceConn, err := grpc.Dial(userServiceAddress, grpc.WithInsecure(), grpc.WithBlock())
+	userServiceConn, err := grpc.Dial(userServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect user service: %v", err)
 	}
+	fmt.Println("connect user service")
 	defer userServiceConn.Close()
 	userGrpcClient := userPb.NewUserClient(userServiceConn)
 
-	productServiceConn, err := grpc.Dial(productServiceAddress, grpc.WithInsecure(), grpc.WithBlock())
+	productServiceConn, err := grpc.Dial(productServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect product service: %v", err)
 	}
+	fmt.Println("connect product service")
 	defer productServiceConn.Close()
 	productGrpcClient := productPb.NewProductClient(productServiceConn)
 
 	orderRepository := order.NewRepository()
 	orderService = order.NewService(orderRepository, userGrpcClient, productGrpcClient)
+
+	//test
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	// defer cancel()
+	// user, err := userGrpcClient.GetUserById(ctx, &userPb.UserRequest{
+	// 	Id: int32(1),
+	// })
+
+	// if err != nil {
+	// 	fmt.Println("error")
+	// }
+
+	// if user != nil {
+	// 	fmt.Printf("success, %v", user.GetId())
+	// }
 
 	// run grpc server
 	lis, err := net.Listen("tcp", port)
@@ -206,5 +226,4 @@ func main() {
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-
 }

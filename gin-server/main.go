@@ -12,12 +12,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 const (
-	userServiceAddress    = "localhost:50052"
-	productServiceAddress = "localhost:50053"
-	orderServiceAddress   = "localhost:50054"
+	userServiceAddress    = "user-service:50052"
+	productServiceAddress = "product-service:50053"
+	orderServiceAddress   = "order-service:50054"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 
 	// user api
 	// Set up a connection to the server.
-	userServiceConn, err := grpc.Dial(userServiceAddress, grpc.WithInsecure(), grpc.WithBlock())
+	userServiceConn, err := grpc.Dial(userServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect user service: %v", err)
 	}
@@ -40,7 +41,7 @@ func main() {
 	//router.DELETE("/users/:id", userHandler.DeleteUser)
 
 	// // product api
-	productServiceConn, err := grpc.Dial(productServiceAddress, grpc.WithInsecure(), grpc.WithBlock())
+	productServiceConn, err := grpc.Dial(productServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect product service: %v", err)
 	}
@@ -55,7 +56,7 @@ func main() {
 	//router.DELETE("/products/:id", productHandler.DeleteProduct)
 
 	// // order api
-	orderServiceConn, err := grpc.Dial(orderServiceAddress, grpc.WithInsecure(), grpc.WithBlock())
+	orderServiceConn, err := grpc.Dial(orderServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect order service: %v", err)
 	}

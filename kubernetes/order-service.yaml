@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    # 選擇帶有 "order-service" 的 pod
+    app: order-service
+  ports:
+    - protocol: "TCP"
+      nodePort: 30054
+      port: 50054
+      targetPort: 50054
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  containers:
+    - name: order-service-container
+      image: vitohuang852/order-service
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 50054
+# kubectl apply -f order-service.yaml
+# kubectl delete -f order-service.yaml
+# minikube service order-service-service --url

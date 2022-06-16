@@ -51,7 +51,7 @@ func (s *service) FindById(Id int) (*OrderResponse, error) {
 func (s *service) getOrderDetail(order *Order) *OrderResponse {
 	orderResponse := OrderResponse{Id: order.Id}
 	// get user info
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	user, err := s.userGrpcClient.GetUserById(ctx, &userPb.UserRequest{
 		Id: int32(order.UserId),
@@ -74,7 +74,7 @@ func (s *service) getOrderDetail(order *Order) *OrderResponse {
 	productResponses := make([]OrderProductsResponse, 0, len(order.Products))
 	var orderPrice int
 	for _, p := range order.Products {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancel()
 		product, err := s.productGrpcClient.GetProductById(ctx, &productPb.ProductRequest{
 			Id: int32(p.ProductId),
@@ -156,7 +156,7 @@ func (s *service) Update(Id int, orderRequest OrderRequest) (*Order, error) {
 
 func (s *service) checkUserValid(userId int) error {
 	// get user info
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	_, err := s.userGrpcClient.GetUserById(ctx, &userPb.UserRequest{
 		Id: int32(userId),
@@ -171,7 +171,7 @@ func (s *service) checkUserValid(userId int) error {
 func (s *service) checkProductsValid(orderProducts []OrderProduct) error {
 	for _, p := range orderProducts {
 		// get products info
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancel()
 		_, err := s.productGrpcClient.GetProductById(ctx, &productPb.ProductRequest{
 			Id: int32(p.ProductId),
