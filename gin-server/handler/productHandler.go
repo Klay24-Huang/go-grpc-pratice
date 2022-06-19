@@ -21,6 +21,11 @@ func NewProductHandler(productClient pb.ProductClient) *productHandler {
 	return &productHandler{productClient}
 }
 
+// @Summary 取得product列表
+// @Tags product
+// @product application/json
+// @Success 200 {array} product.ProductResponse
+// @Router /products [get]
 func (h *productHandler) GetProductList(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -49,6 +54,12 @@ func (h *productHandler) GetProductList(c *gin.Context) {
 	})
 }
 
+// @Summary 取得指定id product資訊
+// @Tags product
+// @product application/json
+// @param product_id path int true "product id"
+// @Success 200 {object} product.ProductResponse
+// @Router /products/{product_id} [get]
 func (h *productHandler) GetProductById(c *gin.Context) {
 	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
@@ -74,6 +85,12 @@ func (h *productHandler) GetProductById(c *gin.Context) {
 	})
 }
 
+// @Summary 新增product
+// @Tags product
+// @product application/json
+// @param product body product.ProductRequest true "product info"
+// @Success 200 {object} pb.ProductReply
+// @Router /products [post]
 func (h *productHandler) CreateProduct(c *gin.Context) {
 	var productRequest product.ProductRequest
 
@@ -106,6 +123,13 @@ func (h *productHandler) CreateProduct(c *gin.Context) {
 	})
 }
 
+// @Summary 更新product資訊
+// @Tags product
+// @product application/json
+// @param id path int true "id"
+// @param product body product.ProductRequest true "product info"
+// @Success 200 {object} pb.ProductReply
+// @Router /products [put]
 func (h *productHandler) UpdateProduct(c *gin.Context) {
 	var updateProductRequest product.ProductRequest
 

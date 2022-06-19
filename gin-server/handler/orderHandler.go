@@ -21,6 +21,11 @@ func NewOrderHandler(orderClient pb.OrderClient) *orderHandler {
 	return &orderHandler{orderClient}
 }
 
+// @Summary 取得order列表
+// @Tags order
+// @product application/json
+// @Success 200 {array} order.OrderResponse
+// @Router /orders [get]
 func (h *orderHandler) GetOrderList(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -70,6 +75,12 @@ func (h *orderHandler) GetOrderList(c *gin.Context) {
 	})
 }
 
+// @Summary 取得指定id order資訊
+// @Tags order
+// @product application/json
+// @param order_id path int true "order id"
+// @Success 200 {object} order.OrderResponse
+// @Router /orders/{order_id} [get]
 func (h *orderHandler) GetOrderById(c *gin.Context) {
 	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
@@ -120,6 +131,12 @@ func (h *orderHandler) GetOrderById(c *gin.Context) {
 	})
 }
 
+// @Summary 新增order
+// @Tags order
+// @product application/json
+// @param order body order.OrderRequest true "order info"
+// @Success 200 {object} pb.OrderReply
+// @Router /orders [post]
 func (h *orderHandler) CreateOrder(c *gin.Context) {
 	var orderRequest order.OrderRequest
 
@@ -162,6 +179,13 @@ func (h *orderHandler) CreateOrder(c *gin.Context) {
 	})
 }
 
+// @Summary 更新order資訊
+// @Tags order
+// @product application/json
+// @param id path int true "id"
+// @param order body order.OrderRequest true "order info"
+// @Success 200 {object} pb.OrderReply
+// @Router /orders [put]
 func (h *orderHandler) UpdateOrder(c *gin.Context) {
 	var updateOrderRequest order.OrderRequest
 
@@ -206,6 +230,12 @@ func (h *orderHandler) UpdateOrder(c *gin.Context) {
 	})
 }
 
+// @Summary 刪除指定id order
+// @Tags order
+// @product application/json
+// @param order_id path int true "order id"
+// @Success 200
+// @Router /orders/{order_id} [delete]
 func (h *orderHandler) DeleteOrder(c *gin.Context) {
 	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)

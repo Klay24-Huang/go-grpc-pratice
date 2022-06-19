@@ -1,0 +1,355 @@
+definitions:
+  __.OrderProductReply:
+    properties:
+      productAmount:
+        type: integer
+      productId:
+        type: integer
+    type: object
+  __.OrderReply:
+    properties:
+      id:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/__.OrderProductReply'
+        type: array
+      userId:
+        type: integer
+    type: object
+  __.ProductReply:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+    type: object
+  order.OrderProduct:
+    properties:
+      product_amount:
+        type: integer
+      product_id:
+        type: integer
+    required:
+    - product_amount
+    - product_id
+    type: object
+  order.OrderProductsResponse:
+    properties:
+      product_amount:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      product_price:
+        type: integer
+    type: object
+  order.OrderRequest:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/order.OrderProduct'
+        type: array
+      user_id:
+        type: integer
+    required:
+    - products
+    - user_id
+    type: object
+  order.OrderResponse:
+    properties:
+      id:
+        type: integer
+      order_price:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/order.OrderProductsResponse'
+        type: array
+      user:
+        $ref: '#/definitions/order.OrderUserResponse'
+    type: object
+  order.OrderUserResponse:
+    properties:
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  product.ProductRequest:
+    properties:
+      name:
+        type: string
+      price:
+        type: integer
+    required:
+    - name
+    - price
+    type: object
+  product.ProductResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+    type: object
+  user.UserRequest:
+    properties:
+      account:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    required:
+    - account
+    - name
+    - phone
+    type: object
+  user.UserResponse:
+    properties:
+      account:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  user_service.UserReply:
+    properties:
+      account:
+        type: string
+      id:
+        description: |-
+          UserInfo userInfo = 1;
+          ErrorMessage error = 2;
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: |-
+    Golang 微服務範例
+    更多說明參考 https://github.com/Klay24-Huang/go-grpc-pratice
+  title: Go gRPC simple demo
+  version: "1.0"
+paths:
+  /orders:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/order.OrderResponse'
+            type: array
+      summary: 取得order列表
+      tags:
+      - order
+    post:
+      parameters:
+      - description: order info
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/order.OrderRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/__.OrderReply'
+      summary: 新增order
+      tags:
+      - order
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: order info
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/order.OrderRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/__.OrderReply'
+      summary: 更新order資訊
+      tags:
+      - order
+  /orders/{order_id}:
+    delete:
+      parameters:
+      - description: order id
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ""
+      summary: 刪除指定id order
+      tags:
+      - order
+    get:
+      parameters:
+      - description: order id
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.OrderResponse'
+      summary: 取得指定id order資訊
+      tags:
+      - order
+  /products:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/product.ProductResponse'
+            type: array
+      summary: 取得product列表
+      tags:
+      - product
+    post:
+      parameters:
+      - description: product info
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/product.ProductRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/__.ProductReply'
+      summary: 新增product
+      tags:
+      - product
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: product info
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/product.ProductRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/__.ProductReply'
+      summary: 更新product資訊
+      tags:
+      - product
+  /products/{product_id}:
+    get:
+      parameters:
+      - description: product id
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product.ProductResponse'
+      summary: 取得指定id product資訊
+      tags:
+      - product
+  /users:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/user.UserResponse'
+            type: array
+      summary: 取得user列表
+      tags:
+      - user
+    post:
+      parameters:
+      - description: user info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user_service.UserReply'
+      summary: 新增user
+      tags:
+      - user
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: user info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user_service.UserReply'
+      summary: 更新user資訊
+      tags:
+      - user
+  /users/{user_id}:
+    get:
+      parameters:
+      - description: user id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+      summary: 取得指定id user資訊
+      tags:
+      - user
+swagger: "2.0"

@@ -21,6 +21,11 @@ func NewUserHandler(userClient pb.UserClient) *userHandler {
 	return &userHandler{userClient}
 }
 
+// @Summary 取得user列表
+// @Tags user
+// @product application/json
+// @Success 200 {array} user.UserResponse
+// @Router /users [get]
 func (h *userHandler) GetUserList(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -50,6 +55,12 @@ func (h *userHandler) GetUserList(c *gin.Context) {
 	})
 }
 
+// @Summary 取得指定id user資訊
+// @Tags user
+// @product application/json
+// @param user_id path int true "user id"
+// @Success 200 {object} user.UserResponse
+// @Router /users/{user_id} [get]
 func (h *userHandler) GetUserById(c *gin.Context) {
 	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
@@ -76,6 +87,12 @@ func (h *userHandler) GetUserById(c *gin.Context) {
 	})
 }
 
+// @Summary 新增user
+// @Tags user
+// @product application/json
+// @param user body user.UserRequest true "user info"
+// @Success 200 {object} pb.UserReply
+// @Router /users [post]
 func (h *userHandler) CreateUser(c *gin.Context) {
 	var userRequest user.UserRequest
 
@@ -109,6 +126,13 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 	})
 }
 
+// @Summary 更新user資訊
+// @Tags user
+// @product application/json
+// @param id path int true "id"
+// @param user body user.UserRequest true "user info"
+// @Success 200 {object} pb.UserReply
+// @Router /users [put]
 func (h *userHandler) UpdateUser(c *gin.Context) {
 	var updateUserRequest user.UserRequest
 
